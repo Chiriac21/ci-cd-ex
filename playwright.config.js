@@ -23,6 +23,7 @@ export default defineConfig({
   webServer: {
     command: 'npm start',
     port: 8080,
+    // eslint-disable-next-line no-undef
     reuseExistingServer: !process.env.CI,
   },
 });
