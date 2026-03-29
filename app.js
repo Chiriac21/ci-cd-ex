@@ -12,7 +12,7 @@ const start = async () => {
 }
 
 app.get('/version', (req, res) => {
-  res.send('7') // change this string to ensure a new version deployed
+  res.send('8') // change this string to ensure a new version deployed
 })
 
 app.get('/health', (req, res) => {
