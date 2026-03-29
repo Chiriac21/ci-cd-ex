@@ -1,4 +1,4 @@
-/* eslint-env node */
+/* eslint-disable no-undef */
 
 const { TextEncoder, TextDecoder } = require('util')
 
