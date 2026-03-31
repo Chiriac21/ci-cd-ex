@@ -29,7 +29,7 @@ jobs:
       - name: Run npm build
         run: npm run build
       - name: Trigger deployment
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip')}}
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK }}
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
@@ -40,12 +40,12 @@ jobs:
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.*.message, ' '), '#skip') }}
     steps:
         - uses: actions/checkout@v6
           with:
             fetch-depth: 0
         - name: Bump version and push tag
-          if: ${{ github.event_name == 'push' }}
           uses: anothrNick/github-tag-action@1.75.0
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
