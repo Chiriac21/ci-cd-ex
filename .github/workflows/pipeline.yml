@@ -50,4 +50,38 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             DEFAULT_BUMP: patch
+  discord_notification:
+    needs: [simple_deployment_pipeline, tag_release]
+    runs-on: ubuntu-latest
+    if: ${{ always() }}
 
+    steps:
+      - name: Send success notification
+        if: ${{ needs.simple_deployment_pipeline.result == 'success' && (needs.tag_release.result == 'success' || needs.tag_release.result == 'skipped') }}
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: Success
+          nodetail: true
+          title: "Deployment pipeline succeeded"
+          description: |
+            Workflow: `${{ github.workflow }}`
+            Branch: `${{ github.ref_name }}`
+            Actor: `${{ github.actor }}`
+            Commit: `${{ github.sha }}`
+          color: 0x57F287
+
+      - name: Send failure notification
+        if: ${{ needs.simple_deployment_pipeline.result == 'failure' || needs.simple_deployment_pipeline.result == 'cancelled' || needs.tag_release.result == 'failure' || needs.tag_release.result == 'cancelled' }}
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: Failure
+          nodetail: true
+          title: "Deployment pipeline failed"
+          description: |
+            Workflow: `${{ github.workflow }}`
+            Branch: `${{ github.ref_name }}`
+            Actor: `${{ github.actor }}`
+            Commit: `${{ github.sha }}`
+          color: 0xED4245
