@@ -39,7 +39,7 @@ jobs:
           retention-days: 30
   tag_release:
     needs: [simple_deployment_pipeline]
-    runs-on: ububuntu-latest
+    runs-on: ubuntu-latest
     steps:
         - name: Bump version and push tag
           if: ${{ github.event_name == 'push' }}
